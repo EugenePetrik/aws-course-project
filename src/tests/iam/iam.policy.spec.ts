@@ -79,5 +79,3 @@ describe('IAM Policies', () => {
     });
   });
 });
-
-// git remote add origin git@github.com-personal:EugenePetrik/aws-course-project.git
