@@ -25,7 +25,7 @@ describe('IAM Roles', () => {
       expectedRole: [
         {
           Effect: 'Allow',
-          Principal: { Service: 's3.amazonaws.com' },
+          Principal: { Service: 'ec2.amazonaws.com' },
           Action: 'sts:AssumeRole',
         },
       ],
@@ -38,7 +38,7 @@ describe('IAM Roles', () => {
       expectedRole: [
         {
           Effect: 'Allow',
-          Principal: { Service: 's3.amazonaws.com' },
+          Principal: { Service: 'ec2.amazonaws.com' },
           Action: 'sts:AssumeRole',
         },
       ],
