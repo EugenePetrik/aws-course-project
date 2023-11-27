@@ -1,0 +1,45 @@
+{
+  "name": "aws-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "_lint": "eslint . --ext .ts --fix",
+    "_typeCheck": "tsc",
+    "lint": "npm run _lint && npm run _typeCheck",
+    "test": "node ./node_modules/mocha/bin/mocha",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && tsc -p tsconfig.build.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-iam": "^3.454.0",
+    "aws-sdk": "^2.1502.0",
+    "chai": "^4.3.10",
+    "dotenv": "^16.3.1",
+    "mocha-multi-reporters": "^1.5.1",
+    "mochawesome": "^7.1.3",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.11",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "eslint": "^8.54.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-chai-expect": "^3.0.0",
+    "eslint-plugin-chai-friendly": "^0.7.2",
+    "eslint-plugin-mocha": "^10.2.0",
+    "eslint-plugin-no-only-tests": "^3.1.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "mocha": "^10.2.0",
+    "prettier": "^3.1.0",
+    "tsc-files": "^1.1.4",
+    "typescript": "^5.3.2"
+  }
+}

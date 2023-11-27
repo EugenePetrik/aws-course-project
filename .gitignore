@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# IDE related files
+.idea/
+
+# Report folders
+mochawesome-report/
+
+# TS compile
+dist/
