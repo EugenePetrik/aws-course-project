@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-ec2": "^3.458.0",
     "@aws-sdk/client-iam": "^3.454.0",
     "aws-sdk": "^2.1502.0",
     "chai": "^4.3.10",
