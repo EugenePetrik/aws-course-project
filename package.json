@@ -18,6 +18,7 @@
     "@aws-sdk/client-ec2": "^3.458.0",
     "@aws-sdk/client-iam": "^3.454.0",
     "aws-sdk": "^2.1502.0",
+    "axios": "^1.6.2",
     "chai": "^4.3.10",
     "dotenv": "^16.3.1",
     "mocha-multi-reporters": "^1.5.1",
