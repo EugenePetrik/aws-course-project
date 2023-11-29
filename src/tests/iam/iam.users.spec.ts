@@ -34,8 +34,8 @@ describe('IAM Users', () => {
       const user = await iam.send(new GetUserCommand({ UserName: userName }));
 
       // Validate the user data
-      expect(user.User.UserName).to.equal(userName);
-      expect(user.User.Arn).to.equal(`arn:aws:iam::${accountId}:user/${userName}`);
+      expect(user.User.UserName, 'User.UserName is not correct').to.equal(userName);
+      expect(user.User.Arn, 'User.Arn is not correct').to.equal(`arn:aws:iam::${accountId}:user/${userName}`);
 
       // Check if the user is a member of the specified group
       const groupsForUser = await iam.send(
@@ -44,10 +44,13 @@ describe('IAM Users', () => {
         }),
       );
 
+      // Extract groups from the response
       const groupNamesForUser = groupsForUser.Groups.find((group) => group.GroupName === groupName);
 
-      expect(groupNamesForUser.GroupName).to.equal(groupName);
-      expect(groupNamesForUser.Arn).to.equal(`arn:aws:iam::${accountId}:group/${groupName}`);
+      expect(groupNamesForUser.GroupName, 'User group GroupName is not correct').to.equal(groupName);
+      expect(groupNamesForUser.Arn, 'User group Arn is not correct').to.equal(
+        `arn:aws:iam::${accountId}:group/${groupName}`,
+      );
     });
   });
 });

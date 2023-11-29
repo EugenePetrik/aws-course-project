@@ -8,7 +8,7 @@ describe('IAM Policies', () => {
       skip: false,
       title: 'Should have FullAccessPolicyEC2 created',
       policyName: 'FullAccessPolicyEC2',
-      expectedPermissions: [
+      expectedPolicy: [
         {
           Action: 'ec2:*',
           Effect: 'Allow',
@@ -20,7 +20,7 @@ describe('IAM Policies', () => {
       skip: false,
       title: 'Should have FullAccessPolicyS3 created',
       policyName: 'FullAccessPolicyS3',
-      expectedPermissions: [
+      expectedPolicy: [
         {
           Action: 's3:*',
           Effect: 'Allow',
@@ -32,7 +32,7 @@ describe('IAM Policies', () => {
       skip: false,
       title: 'Should have ReadAccessPolicyS3 created',
       policyName: 'ReadAccessPolicyS3',
-      expectedPermissions: [
+      expectedPolicy: [
         {
           Action: ['s3:Describe*', 's3:Get*', 's3:List*'],
           Effect: 'Allow',
@@ -40,7 +40,7 @@ describe('IAM Policies', () => {
         },
       ],
     },
-  ].forEach(({ skip, title, policyName, expectedPermissions }) => {
+  ].forEach(({ skip, title, policyName, expectedPolicy }) => {
     (skip ? it.skip : it)(title, async () => {
       const { accountId, accessKeyId, secretAccessKey, region } = BaseConfig;
 
@@ -72,10 +72,15 @@ describe('IAM Policies', () => {
       const decodedDocument = decodeURIComponent(policyVersion.PolicyVersion.Document);
 
       // Parse the JSON document to access the statements
-      const statements = JSON.parse(decodedDocument).Statement;
+      const actualPolicy = JSON.parse(decodedDocument).Statement;
 
       // Validate the policy data
-      expect(statements).to.eql(expectedPermissions);
+      expect(
+        actualPolicy,
+        `Policy is not correct: actual policy - ${JSON.stringify(actualPolicy)}, expected policy - ${JSON.stringify(
+          expectedPolicy,
+        )}`,
+      ).to.eql(expectedPolicy);
     });
   });
 });

@@ -34,8 +34,8 @@ describe('IAM User Groups', () => {
       const group = await iam.send(new GetGroupCommand({ GroupName: groupName }));
 
       // Validate the group data
-      expect(group.Group.GroupName).to.equal(groupName);
-      expect(group.Group.Arn).to.equal(`arn:aws:iam::${accountId}:group/${groupName}`);
+      expect(group.Group.GroupName, 'Group.GroupName is not correct').to.equal(groupName);
+      expect(group.Group.Arn, 'Group.Arn is not correct').to.equal(`arn:aws:iam::${accountId}:group/${groupName}`);
 
       // Get the attached policies for the group
       const attachedPolicies = await iam.send(
@@ -45,17 +45,22 @@ describe('IAM User Groups', () => {
       );
 
       // Extract policy names from the response
-      const attachedPolicy = attachedPolicies.AttachedPolicies.filter((policy) => policy.PolicyName === policyName);
+      const actualPolicy = attachedPolicies.AttachedPolicies.filter((policy) => policy.PolicyName === policyName);
 
       // Validate the policy data
-      const expectedPolicies = [
+      const expectedPolicy = [
         {
           PolicyName: policyName,
           PolicyArn: `arn:aws:iam::${accountId}:policy/${policyName}`,
         },
       ];
 
-      expect(attachedPolicy).to.eql(expectedPolicies);
+      expect(
+        actualPolicy,
+        `Policy is not correct: actual policy - ${JSON.stringify(actualPolicy)}, expected policy - ${JSON.stringify(
+          expectedPolicy,
+        )}`,
+      ).to.eql(expectedPolicy);
     });
   });
 });

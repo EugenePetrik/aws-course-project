@@ -66,10 +66,15 @@ describe('IAM Roles', () => {
       const decodedDocument = decodeURIComponent(role.Role?.AssumeRolePolicyDocument);
 
       // Parse the JSON document to access the statements
-      const statements = JSON.parse(decodedDocument).Statement;
+      const actualRole = JSON.parse(decodedDocument).Statement;
 
       // Validate the role
-      expect(statements).to.eql(expectedRole);
+      expect(
+        actualRole,
+        `Role is not correct: actual role - ${JSON.stringify(actualRole)}, expected role - ${JSON.stringify(
+          expectedRole,
+        )}`,
+      ).to.eql(expectedRole);
 
       // Get the attached policies for the role
       const attachedPolicies = await iam.send(
@@ -78,17 +83,23 @@ describe('IAM Roles', () => {
         }),
       );
 
-      const policies = attachedPolicies.AttachedPolicies;
+      // Extract attached policies from the response
+      const actualPolicy = attachedPolicies.AttachedPolicies;
 
       // Validate the policy data
-      const expectedPolicies = [
+      const expectedPolicy = [
         {
           PolicyArn: `arn:aws:iam::${accountId}:policy/${policyName}`,
           PolicyName: policyName,
         },
       ];
 
-      expect(policies).to.eql(expectedPolicies);
+      expect(
+        actualPolicy,
+        `Policy is not correct: actual policy - ${JSON.stringify(actualPolicy)}, expected policy - ${JSON.stringify(
+          expectedPolicy,
+        )}`,
+      ).to.eql(expectedPolicy);
     });
   });
 });
