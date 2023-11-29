@@ -205,7 +205,7 @@ describe('EC2', () => {
     });
   });
 
-  it('Application API endpoint should respond with the correct instance information from EC2 metadata', async () => {
+  it('Application API endpoint should return correct instance information', async () => {
     const publicInstance = deployedInstances.find((instance) => instance.type === 'public');
 
     const publicIpv4Address = publicInstance.os.PublicIpAddress;
