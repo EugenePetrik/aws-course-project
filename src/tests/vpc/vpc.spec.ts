@@ -5,26 +5,12 @@ import { BaseConfig } from '../../BaseConfig';
 describe('VPC', () => {
   const { accessKeyId, secretAccessKey, region } = BaseConfig;
 
-  it('The application should be deployed in non-default VPC', async () => {
+  let ec2Client: EC2Client = null;
+  let vpcId: string = null;
+
+  before(async () => {
     // Configure AWS SDK
-    const ec2Client = new EC2Client({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
-
-    // Retrieve information about all VPCs
-    const vpcs = await ec2Client.send(new DescribeVpcsCommand({}));
-
-    // Check if there are two VPCs
-    expect(vpcs.Vpcs, 'The number of VPCs is not correct').to.be.an('array').with.lengthOf(2);
-  });
-
-  it('The application should be deployed in non-default VPC and has 2 subnets', async () => {
-    // Configure AWS SDK
-    const ec2Client = new EC2Client({
+    ec2Client = new EC2Client({
       region,
       credentials: {
         accessKeyId,
@@ -55,9 +41,23 @@ describe('VPC', () => {
       );
     }, []);
 
-    // Retrieve VPC ID for deployed public instance
-    const vpcId = deployedInstances.find((instance) => instance.type === 'public').os.VpcId;
+    // Retrieve VPC ID for an instance
+    vpcId = deployedInstances.find((instance) => instance.type === 'public').os.VpcId;
+  });
 
+  it('should be deployed in non-default VPC', async () => {
+    // Retrieve information about all VPCs
+    const vpcs = await ec2Client.send(new DescribeVpcsCommand({}));
+
+    // Check if there are two VPCs
+    expect(vpcs.Vpcs, 'The number of VPCs is not correct').to.be.an('array').with.lengthOf(2);
+
+    // Check if there is one non-default VPC
+    const nonDefaultVpcs = vpcs.Vpcs.filter((vpc) => !vpc.IsDefault);
+    expect(nonDefaultVpcs, 'There is no non-default VPC').to.be.an('array').that.is.not.empty;
+  });
+
+  it('should have two subnets: public and private', async () => {
     // Check subnets in the non-default VPC
     const subnets = await ec2Client.send(
       new DescribeSubnetsCommand({ Filters: [{ Name: 'vpc-id', Values: [vpcId] }] }),
@@ -65,54 +65,37 @@ describe('VPC', () => {
 
     // Check if there are exactly two subnets
     expect(subnets.Subnets, 'The number of subnets is not correct').to.be.an('array').with.lengthOf(2);
+
+    // Check if there are subnets types
+    const subnetTags = subnets.Subnets.map(
+      (subnet) => subnet.Tags.find(({ Key }) => Key === 'aws-cdk:subnet-type')?.Value,
+    );
+    expect(subnetTags, 'Subnet type is not correct').to.have.members(['Public', 'Private']);
   });
 
-  it('Should return VPC CIDR Block and VPC tags', async () => {
-    // Configure AWS SDK
-    const ec2Client = new EC2Client({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
-
-    // Get information about instances
-    const params = {
-      Filters: [
-        {
-          Name: 'instance-state-name',
-          Values: ['running'],
-        },
-      ],
-    };
-
-    const instances = await ec2Client.send(new DescribeInstancesCommand(params));
-
-    // Extract relevant information about the instances
-    const deployedInstances = instances.Reservations.reduce((acc, reservation) => {
-      return acc.concat(
-        reservation.Instances.map((instance) => ({
-          type: instance.PublicIpAddress ? 'public' : 'private',
-          os: instance,
-        })),
-      );
-    }, []);
-
-    // Retrieve VPC ID for deployed public instance
-    const vpcId = deployedInstances.find((instance) => instance.type === 'public').os.VpcId;
-
+  it('should have CIDR block 10.0.0.0/16', async () => {
     // Extract relevant information about the VPC
-    const describeVpcsCommand = new DescribeVpcsCommand({
-      VpcIds: [vpcId],
-    });
-
-    const vpcs = await ec2Client.send(describeVpcsCommand);
+    const vpcs = await ec2Client.send(
+      new DescribeVpcsCommand({
+        VpcIds: [vpcId],
+      }),
+    );
 
     expect(vpcs.Vpcs[0].CidrBlock, 'VPC CIDR Block is not correct').to.equal('10.0.0.0/16');
-    expect(vpcs.Vpcs[0].Tags.find((tag) => tag.Key === 'Name').Value, `Tag 'Name' is not correct`).to.equal(
+  });
+
+  it('should have Name and cloudx tags', async () => {
+    // Extract relevant information about the VPC
+    const vpcs = await ec2Client.send(
+      new DescribeVpcsCommand({
+        VpcIds: [vpcId],
+      }),
+    );
+
+    expect(vpcs.Vpcs[0].Tags.find(({ Key }) => Key === 'Name').Value, `Tag 'Name' is not correct`).to.equal(
       'cloudxinfo/Network/Vpc',
     );
-    expect(vpcs.Vpcs[0].Tags.find((tag) => tag.Key === 'cloudx').Value, `Tag 'cloudx' is not correct`).to.equal('qa');
+
+    expect(vpcs.Vpcs[0].Tags.find(({ Key }) => Key === 'cloudx').Value, `Tag 'cloudx' is not correct`).to.equal('qa');
   });
 });
