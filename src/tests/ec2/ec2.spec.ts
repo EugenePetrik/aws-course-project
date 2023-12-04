@@ -11,19 +11,18 @@ import { BaseConfig } from '../../BaseConfig';
 describe('EC2', () => {
   const { accessKeyId, secretAccessKey, region } = BaseConfig;
 
-  let ec2: EC2Client = null;
+  // Configure AWS SDK
+  const ec2 = new EC2Client({
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
+
   let deployedInstances: any[] = null;
 
   before(async () => {
-    // Configure AWS SDK
-    ec2 = new EC2Client({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
-
     // Get information about instances
     const params = {
       Filters: [

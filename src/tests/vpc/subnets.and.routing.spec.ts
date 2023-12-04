@@ -101,7 +101,7 @@ describe('Subnets and routing', () => {
       }),
     );
 
-    if (routeTables.RouteTables.length === 0) {
+    if (!routeTables.RouteTables.length) {
       throw new Error('No Route Table found for the private subnet.');
     }
 
@@ -123,7 +123,7 @@ describe('Subnets and routing', () => {
       }),
     );
 
-    if (routeTables.RouteTables.length === 0) {
+    if (!routeTables.RouteTables.length) {
       throw new Error('No Route Table found for the private subnet.');
     }
 

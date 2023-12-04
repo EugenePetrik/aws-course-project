@@ -5,19 +5,18 @@ import { BaseConfig } from '../../BaseConfig';
 describe('VPC', () => {
   const { accessKeyId, secretAccessKey, region } = BaseConfig;
 
-  let ec2Client: EC2Client = null;
   let vpcId: string = null;
 
-  before(async () => {
-    // Configure AWS SDK
-    ec2Client = new EC2Client({
-      region,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-    });
+  // Configure AWS SDK
+  const ec2Client = new EC2Client({
+    region,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
 
+  before(async () => {
     // Get information about instances
     const params = {
       Filters: [
