@@ -209,13 +209,14 @@ describe('EC2', () => {
 
     const publicIpv4Address = publicInstance.os.PublicIpAddress;
     const privateIpv4Address = publicInstance.os.PrivateIpAddress;
+    const availabilityZone = publicInstance.os.Placement.AvailabilityZone;
 
     const response = await axios.get(`http://${publicIpv4Address}`);
 
     expect(response.status, 'Response status is not correct').to.equal(200);
 
-    expect(response.data.availability_zone, 'availability_zone is not correct').to.equal('us-east-1a');
+    expect(response.data.availability_zone, 'availability_zone is not correct').to.equal(availabilityZone);
     expect(response.data.private_ipv4, 'private_ipv4 is not correct').to.equal(privateIpv4Address);
-    expect(response.data.region, 'region is not correct').to.equal('us-east-1');
+    expect(response.data.region, 'region is not correct').to.equal(region);
   });
 });
