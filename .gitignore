@@ -12,3 +12,6 @@ mochawesome-report/
 
 # TS compile
 dist/
+
+# Credentials folder
+credentials/

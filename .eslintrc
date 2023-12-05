@@ -135,6 +135,7 @@
     "import/no-default-export": "error",
     "@typescript-eslint/no-redundant-type-constituents": "warn",
     "@typescript-eslint/no-unsafe-enum-comparison": "warn",
-    "@typescript-eslint/no-unsafe-argument": "warn"
+    "@typescript-eslint/no-unsafe-argument": "warn",
+    "consistent-return": "off"
   }
 }
