@@ -1,5 +1,12 @@
 import { expect } from 'chai';
-import { IAMClient, ListAttachedGroupPoliciesCommand, GetGroupCommand } from '@aws-sdk/client-iam';
+import {
+  IAMClient,
+  ListAttachedGroupPoliciesCommand,
+  GetGroupCommand,
+  GetGroupCommandOutput,
+  ListAttachedGroupPoliciesCommandOutput,
+  AttachedPolicy,
+} from '@aws-sdk/client-iam';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('IAM User Groups', () => {
@@ -28,24 +35,26 @@ describe('IAM User Groups', () => {
 
       const credentials = { accessKeyId, secretAccessKey, region };
 
-      const iam = new IAMClient(credentials);
+      const iam: IAMClient = new IAMClient(credentials);
 
       // Get the user group
-      const group = await iam.send(new GetGroupCommand({ GroupName: groupName }));
+      const group: GetGroupCommandOutput = await iam.send(new GetGroupCommand({ GroupName: groupName }));
 
       // Validate the group data
       expect(group.Group.GroupName, 'Group.GroupName is not correct').to.equal(groupName);
       expect(group.Group.Arn, 'Group.Arn is not correct').to.equal(`arn:aws:iam::${accountId}:group/${groupName}`);
 
       // Get the attached policies for the group
-      const attachedPolicies = await iam.send(
+      const attachedPolicies: ListAttachedGroupPoliciesCommandOutput = await iam.send(
         new ListAttachedGroupPoliciesCommand({
           GroupName: groupName,
         }),
       );
 
       // Extract policy names from the response
-      const actualPolicy = attachedPolicies.AttachedPolicies.filter((policy) => policy.PolicyName === policyName);
+      const actualPolicy: AttachedPolicy[] = attachedPolicies.AttachedPolicies.filter(
+        (policy) => policy.PolicyName === policyName,
+      );
 
       // Validate the policy data
       const expectedPolicy = [

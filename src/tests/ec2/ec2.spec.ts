@@ -1,10 +1,14 @@
 import { expect } from 'chai';
-import axios from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 import {
   EC2Client,
   DescribeInstancesCommand,
   DescribeSecurityGroupsCommand,
   DescribeVolumesCommand,
+  DescribeInstancesCommandOutput,
+  DescribeVolumesCommandOutput,
+  DescribeSecurityGroupsCommandOutput,
+  SecurityGroup,
 } from '@aws-sdk/client-ec2';
 import { BaseConfig } from '../../BaseConfig';
 
@@ -12,7 +16,7 @@ describe('EC2', () => {
   const { accessKeyId, secretAccessKey, region } = BaseConfig;
 
   // Configure AWS SDK
-  const ec2 = new EC2Client({
+  const ec2: EC2Client = new EC2Client({
     region,
     credentials: {
       accessKeyId,
@@ -33,7 +37,7 @@ describe('EC2', () => {
       ],
     };
 
-    const data = await ec2.send(new DescribeInstancesCommand(params));
+    const data: DescribeInstancesCommandOutput = await ec2.send(new DescribeInstancesCommand(params));
 
     // Extract relevant information about the instances
     deployedInstances = data.Reservations.reduce((acc, reservation) => {
@@ -55,7 +59,7 @@ describe('EC2', () => {
   });
 
   it('Should return public instance configuration', () => {
-    const publicInstance = deployedInstances.find((instance) => instance.type === 'public');
+    const publicInstance: any = deployedInstances.find((instance) => instance.type === 'public');
 
     expect(publicInstance.type, 'Type of instance is not correct').to.equal('public');
     expect(publicInstance.instanceType, 'Instance type is not correct').to.equal('t2.micro');
@@ -68,7 +72,7 @@ describe('EC2', () => {
   });
 
   it('Should return private instance configuration', () => {
-    const privateInstance = deployedInstances.find((instance) => instance.type === 'private');
+    const privateInstance: any = deployedInstances.find((instance) => instance.type === 'private');
 
     expect(privateInstance.type, 'Type of instance is not correct').to.equal('private');
     expect(privateInstance.instanceType, 'Instance type is not correct').to.equal('t2.micro');
@@ -84,7 +88,7 @@ describe('EC2', () => {
   });
 
   it('Should return public instances volumes', async () => {
-    const instanceId = deployedInstances.find((instance) => instance.type === 'public').id;
+    const instanceId: string = deployedInstances.find((instance) => instance.type === 'public').id;
 
     const params = {
       Filters: [
@@ -95,14 +99,14 @@ describe('EC2', () => {
       ],
     };
 
-    const data = await ec2.send(new DescribeVolumesCommand(params));
+    const data: DescribeVolumesCommandOutput = await ec2.send(new DescribeVolumesCommand(params));
 
     expect(data.Volumes[0].Size, `'Volumes.Size' is not correct`).to.equal(8);
     expect(data.Volumes[0].VolumeType, `'Volumes.VolumeType' is not correct`).to.equal('gp2');
   });
 
   it('Should return private instances volumes', async () => {
-    const instanceId = deployedInstances.find((instance) => instance.type === 'private').id;
+    const instanceId: string = deployedInstances.find((instance) => instance.type === 'private').id;
 
     const params = {
       Filters: [
@@ -113,7 +117,7 @@ describe('EC2', () => {
       ],
     };
 
-    const data = await ec2.send(new DescribeVolumesCommand(params));
+    const data: DescribeVolumesCommandOutput = await ec2.send(new DescribeVolumesCommand(params));
 
     expect(data.Volumes[0].Size, `'Volumes.Size' is not correct`).to.equal(8);
     expect(data.Volumes[0].VolumeType, `'Volumes.VolumeType' is not correct`).to.equal('gp2');
@@ -121,18 +125,18 @@ describe('EC2', () => {
 
   it(`Should return security groups configuration for the instances`, async () => {
     // Get the security group IDs associated with the public instance
-    const publicSecurityGroupIds = deployedInstances
+    const publicSecurityGroupIds: any = deployedInstances
       .find((instance) => instance.type === 'public')
       .os.SecurityGroups.map((group) => group.GroupId);
 
     // Describe security groups for the public instance
-    const publicSecurityGroups = await ec2.send(
+    const publicSecurityGroups: DescribeSecurityGroupsCommandOutput = await ec2.send(
       new DescribeSecurityGroupsCommand({
         GroupIds: publicSecurityGroupIds,
       }),
     );
 
-    const publicSecurityGroup = publicSecurityGroups.SecurityGroups[0];
+    const publicSecurityGroup: SecurityGroup = publicSecurityGroups.SecurityGroups[0];
 
     expect(
       publicSecurityGroup.IpPermissions,
@@ -164,18 +168,18 @@ describe('EC2', () => {
     const ownerId: string = publicSecurityGroup.OwnerId;
 
     // Get the security group IDs associated with the private instance
-    const privateSecurityGroupIds = deployedInstances
+    const privateSecurityGroupIds: any = deployedInstances
       .find((instance) => instance.type === 'private')
       .os.SecurityGroups.map((group) => group.GroupId);
 
     // Describe security groups for the private instance
-    const privateSecurityGroups = await ec2.send(
+    const privateSecurityGroups: DescribeSecurityGroupsCommandOutput = await ec2.send(
       new DescribeSecurityGroupsCommand({
         GroupIds: privateSecurityGroupIds,
       }),
     );
 
-    const privateSecurityGroup = privateSecurityGroups.SecurityGroups[0];
+    const privateSecurityGroup: SecurityGroup = privateSecurityGroups.SecurityGroups[0];
 
     expect(
       privateSecurityGroup.IpPermissions,
@@ -205,13 +209,13 @@ describe('EC2', () => {
   });
 
   it('Application API endpoint should return correct instance information', async () => {
-    const publicInstance = deployedInstances.find((instance) => instance.type === 'public');
+    const publicInstance: any = deployedInstances.find((instance) => instance.type === 'public');
 
-    const publicIpv4Address = publicInstance.os.PublicIpAddress;
-    const privateIpv4Address = publicInstance.os.PrivateIpAddress;
-    const availabilityZone = publicInstance.os.Placement.AvailabilityZone;
+    const publicIpv4Address: string = publicInstance.os.PublicIpAddress;
+    const privateIpv4Address: string = publicInstance.os.PrivateIpAddress;
+    const availabilityZone: string = publicInstance.os.Placement.AvailabilityZone;
 
-    const response = await axios.get(`http://${publicIpv4Address}`);
+    const response: AxiosResponse = await axios.get(`http://${publicIpv4Address}`);
 
     expect(response.status, 'Response status is not correct').to.equal(200);
 

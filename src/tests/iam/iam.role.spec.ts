@@ -1,5 +1,12 @@
 import { expect } from 'chai';
-import { IAMClient, GetRoleCommand, ListAttachedRolePoliciesCommand } from '@aws-sdk/client-iam';
+import {
+  IAMClient,
+  GetRoleCommand,
+  ListAttachedRolePoliciesCommand,
+  GetRoleCommandOutput,
+  ListAttachedRolePoliciesCommandOutput,
+  AttachedPolicy,
+} from '@aws-sdk/client-iam';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('IAM Roles', () => {
@@ -49,10 +56,10 @@ describe('IAM Roles', () => {
 
       const credentials = { accessKeyId, secretAccessKey, region };
 
-      const iam = new IAMClient(credentials);
+      const iam: IAMClient = new IAMClient(credentials);
 
       // Get the role
-      const role = await iam.send(
+      const role: GetRoleCommandOutput = await iam.send(
         new GetRoleCommand({
           RoleName: roleName,
         }),
@@ -63,10 +70,10 @@ describe('IAM Roles', () => {
       expect(role.Role.Arn).to.equal(`arn:aws:iam::${accountId}:role/${roleName}`);
 
       // Decode the URL-encoded JSON document
-      const decodedDocument = decodeURIComponent(role.Role?.AssumeRolePolicyDocument);
+      const decodedDocument: string = decodeURIComponent(role.Role?.AssumeRolePolicyDocument);
 
       // Parse the JSON document to access the statements
-      const actualRole = JSON.parse(decodedDocument).Statement;
+      const actualRole: any = JSON.parse(decodedDocument).Statement;
 
       // Validate the role
       expect(
@@ -77,14 +84,14 @@ describe('IAM Roles', () => {
       ).to.eql(expectedRole);
 
       // Get the attached policies for the role
-      const attachedPolicies = await iam.send(
+      const attachedPolicies: ListAttachedRolePoliciesCommandOutput = await iam.send(
         new ListAttachedRolePoliciesCommand({
           RoleName: roleName,
         }),
       );
 
       // Extract attached policies from the response
-      const actualPolicy = attachedPolicies.AttachedPolicies;
+      const actualPolicy: AttachedPolicy[] = attachedPolicies.AttachedPolicies;
 
       // Validate the policy data
       const expectedPolicy = [

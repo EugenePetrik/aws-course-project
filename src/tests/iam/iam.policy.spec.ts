@@ -1,5 +1,11 @@
 import { expect } from 'chai';
-import { IAMClient, GetPolicyCommand, GetPolicyVersionCommand } from '@aws-sdk/client-iam';
+import {
+  IAMClient,
+  GetPolicyCommand,
+  GetPolicyVersionCommand,
+  GetPolicyCommandOutput,
+  GetPolicyVersionCommandOutput,
+} from '@aws-sdk/client-iam';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('IAM Policies', () => {
@@ -48,20 +54,20 @@ describe('IAM Policies', () => {
 
       const POLICY_ARN = `arn:aws:iam::${accountId}:policy/${policyName}`;
 
-      const iam = new IAMClient(credentials);
+      const iam: IAMClient = new IAMClient(credentials);
 
       // Get the policy
-      const policy = await iam.send(
+      const policy: GetPolicyCommandOutput = await iam.send(
         new GetPolicyCommand({
           PolicyArn: POLICY_ARN,
         }),
       );
 
       // Get the default policy version
-      const defaultVersionId = policy.Policy?.DefaultVersionId;
+      const defaultVersionId: string = policy.Policy?.DefaultVersionId;
 
       // Get the policy version
-      const policyVersion = await iam.send(
+      const policyVersion: GetPolicyVersionCommandOutput = await iam.send(
         new GetPolicyVersionCommand({
           PolicyArn: POLICY_ARN,
           VersionId: defaultVersionId,
@@ -69,10 +75,10 @@ describe('IAM Policies', () => {
       );
 
       // Decode the URL-encoded JSON document
-      const decodedDocument = decodeURIComponent(policyVersion.PolicyVersion.Document);
+      const decodedDocument: string = decodeURIComponent(policyVersion.PolicyVersion.Document);
 
       // Parse the JSON document to access the statements
-      const actualPolicy = JSON.parse(decodedDocument).Statement;
+      const actualPolicy: any = JSON.parse(decodedDocument).Statement;
 
       // Validate the policy data
       expect(
