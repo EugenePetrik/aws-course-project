@@ -17,7 +17,7 @@ import { join } from 'path';
 import internal from 'stream';
 import { BaseConfig } from '../../BaseConfig';
 
-describe('S3 images upload', () => {
+describe('S3 application functional validation', () => {
   const { accessKeyId, secretAccessKey, region } = BaseConfig;
 
   const ec2Client: EC2Client = new EC2Client({
