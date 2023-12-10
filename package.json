@@ -15,11 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@aws-sdk/client-ec2": "^3.468.0",
-    "@aws-sdk/client-iam": "^3.468.0",
-    "@aws-sdk/client-rds": "^3.468.0",
-    "@aws-sdk/client-s3": "^3.468.0",
-    "aws-sdk": "^2.1514.0",
+    "@aws-sdk/client-ec2": "^3.470.0",
+    "@aws-sdk/client-iam": "^3.470.0",
+    "@aws-sdk/client-rds": "^3.470.0",
+    "@aws-sdk/client-s3": "^3.470.0",
+    "aws-sdk": "^2.1515.0",
     "axios": "^1.6.2",
     "chai": "^4.3.10",
     "dotenv": "^16.3.1",
@@ -31,7 +31,7 @@
     "mysql2": "^3.6.5",
     "playwright": "^1.40.1",
     "ssh2": "^1.14.0",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "tunnel-ssh": "^5.1.1"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "eslint-plugin-no-only-tests": "^3.1.0",
     "eslint-plugin-prettier": "^5.0.1",
     "mocha": "^10.2.0",
-    "prettier": "^3.1.0",
+    "prettier": "^3.1.1",
     "tsc-files": "^1.1.4",
     "typescript": "^5.3.3"
   }
