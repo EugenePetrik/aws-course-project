@@ -31,7 +31,8 @@
     "mysql2": "^3.6.5",
     "playwright": "^1.40.1",
     "ssh2": "^1.14.0",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tunnel-ssh": "^5.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
