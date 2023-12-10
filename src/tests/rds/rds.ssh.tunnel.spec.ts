@@ -1,5 +1,5 @@
 import { type ForwardOptions, type SshOptions, type ServerOptions, type TunnelOptions, createTunnel } from 'tunnel-ssh';
-import mysql from 'mysql2/promise';
+import mysql, { type Connection } from 'mysql2/promise';
 import { join } from 'path';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
@@ -31,6 +31,8 @@ describe('MySQL RDS connection via SSH tunnel', () => {
   let rdsEndpoint: string = null;
 
   before(async function () {
+    // Get EC2 data
+
     const params = {
       Filters: [
         {
@@ -61,6 +63,8 @@ describe('MySQL RDS connection via SSH tunnel', () => {
 
     ({ PublicIpAddress: ec2IpAddress } = ec2Instance.os);
 
+    // Get RDS data
+
     const command: DescribeDBInstancesCommand = new DescribeDBInstancesCommand({});
     const response: DescribeDBInstancesCommandOutput = await rdsClient.send(command);
     const rdsInstances: DBInstance[] = response.DBInstances;
@@ -73,13 +77,6 @@ describe('MySQL RDS connection via SSH tunnel', () => {
   });
 
   it('should connect to MySQL RDS and show tables', async () => {
-    const options: SshOptions = {
-      host: ec2IpAddress,
-      username: 'ec2-user',
-      privateKey: readFileSync(join(process.cwd(), 'credentials', 'cloudximage-us-east-1.pem'), 'utf8'),
-      port: 22,
-    };
-
     async function sshTunnel(sshOptions: SshOptions, port: number, autoClose = true): Promise<void> {
       const forwardOptions: ForwardOptions = {
         srcAddr: '127.0.0.1',
@@ -99,24 +96,37 @@ describe('MySQL RDS connection via SSH tunnel', () => {
       await createTunnel(tunnelOptions, serverOptions, sshOptions, forwardOptions);
     }
 
-    await sshTunnel(options, 3306);
+    let connection: Connection = null;
 
-    const connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: dbUsername,
-      password: dbPassword,
-      port: 3306,
-      database: dbName,
-    });
+    try {
+      const options: SshOptions = {
+        host: ec2IpAddress,
+        username: 'ec2-user',
+        privateKey: readFileSync(join(process.cwd(), 'credentials', 'cloudximage-us-east-1.pem'), 'utf8'),
+        port: 22,
+      };
 
-    const [rows] = await connection.query('SHOW TABLES;');
-    // eslint-disable-next-line no-console
-    console.log('Tables in the database:', rows);
-    // OUTPUT: Tables in the database: [ { Tables_in_cloudximages: 'images' } ]
+      await sshTunnel(options, 3306);
 
-    expect(rows).to.exist;
-    expect(rows).to.be.an('array').that.is.not.empty;
+      connection = await mysql.createConnection({
+        host: '127.0.0.1',
+        user: dbUsername,
+        password: dbPassword,
+        port: 3306,
+        database: dbName,
+      });
 
-    await connection.end();
+      const [rows] = await connection.query('SHOW TABLES;');
+      // eslint-disable-next-line no-console
+      console.log('Tables in the database:', rows); // OUTPUT: Tables in the database: [ { Tables_in_cloudximages: 'images' } ]
+
+      expect(rows, 'There are no created tales').to.be.an('array').that.is.not.empty;
+    } catch {
+      expect.fail(`Failed to connect to ${rdsEndpoint}`);
+    } finally {
+      if (connection && connection.end) {
+        await connection.end();
+      }
+    }
   });
 });
