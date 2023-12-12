@@ -8,6 +8,7 @@ import {
   type Subnet,
 } from '@aws-sdk/client-rds';
 import mysql, { type Connection } from 'mysql2/promise';
+import { log } from '../../utilities/common';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('RDS deployment validation', () => {
@@ -69,8 +70,7 @@ describe('RDS deployment validation', () => {
 
       expect.fail(`Successfully connected to ${rdsInstance.DBInstanceIdentifier} at ${rdsEndpoint}.`);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(`Failed to connect to ${rdsInstance.DBInstanceIdentifier} (expected).`);
+      log(`Failed to connect to ${rdsInstance.DBInstanceIdentifier} (expected).`);
       expect(JSON.stringify(error)).to.equal('{"message":"connect ETIMEDOUT","code":"ETIMEDOUT"}');
     } finally {
       if (connection && connection.end) {

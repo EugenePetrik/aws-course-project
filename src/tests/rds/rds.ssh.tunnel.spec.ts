@@ -10,6 +10,7 @@ import {
   type DescribeDBInstancesCommandOutput,
   RDSClient,
 } from '@aws-sdk/client-rds';
+import { log } from '../../utilities/common';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('MySQL RDS connection via SSH tunnel', () => {
@@ -117,8 +118,8 @@ describe('MySQL RDS connection via SSH tunnel', () => {
       });
 
       const [rows] = await connection.query('SHOW TABLES;');
-      // eslint-disable-next-line no-console
-      console.log('Tables in the database:', rows); // OUTPUT: Tables in the database: [ { Tables_in_cloudximages: 'images' } ]
+      log(`Tables in the database: ${JSON.stringify(rows)}`);
+      // OUTPUT: Tables in the database: [ { Tables_in_cloudximages: 'images' } ]
 
       expect(rows, 'There are no created tales').to.be.an('array').that.is.not.empty;
     } catch {

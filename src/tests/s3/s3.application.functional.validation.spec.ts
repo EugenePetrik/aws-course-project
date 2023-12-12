@@ -15,6 +15,7 @@ import fs from 'fs-extra';
 import FormData from 'form-data';
 import { join } from 'path';
 import internal from 'stream';
+import { log } from '../../utilities/common';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('S3 application functional validation', () => {
@@ -90,11 +91,9 @@ describe('S3 application functional validation', () => {
     try {
       const folderPath: string = join(process.cwd(), 'downloads');
       await fs.ensureDir(folderPath);
-      // eslint-disable-next-line no-console
-      console.log('Folder has been created/verified:', folderPath);
+      log(`Folder has been created/verified: ${folderPath}`);
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(`Error creating folder: ${JSON.stringify(error)}`);
+      log(`Error creating folder: ${JSON.stringify(error)}`);
       throw error;
     }
 
@@ -119,14 +118,12 @@ describe('S3 application functional validation', () => {
 
       await new Promise((resolve, reject) => {
         fileStream.on('finish', () => {
-          // eslint-disable-next-line no-console
-          console.log('Image downloaded successfully:', destinationPath);
+          log(`Image downloaded successfully: ${destinationPath}`);
           resolve(true);
         });
 
         fileStream.on('error', (error) => {
-          // eslint-disable-next-line no-console
-          console.error('Error writing image:', error);
+          log(`Error writing image: ${error}`);
           reject(error);
         });
       });

@@ -8,9 +8,8 @@ export function generateMailtrapEmail(): string {
 }
 
 export function log(message: string): void {
-  const record = `[${formatISO(new Date())}] : ${message}`;
   // eslint-disable-next-line no-console
-  console.log(record);
+  console.log(`[${formatISO(new Date())}] : ${message}`);
 }
 
 async function wait(timeout: number): Promise<unknown> {

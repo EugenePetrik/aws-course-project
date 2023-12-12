@@ -17,6 +17,7 @@ import axios, { type AxiosResponse } from 'axios';
 import { readFileSync } from 'fs';
 import { Client } from 'ssh2';
 import { join } from 'path';
+import { log } from '../../utilities/common';
 import { BaseConfig } from '../../BaseConfig';
 
 const { accessKeyId, secretAccessKey, region } = BaseConfig;
@@ -94,13 +95,11 @@ describe('S3 deployment validation', () => {
       return new Promise((resolve, reject) => {
         conn
           .on('ready', () => {
-            // eslint-disable-next-line no-console
-            console.log('SSH connection successful');
+            log('SSH connection successful');
             resolve(conn);
           })
           .on('error', (error: Error) => {
-            // eslint-disable-next-line no-console
-            console.error('Error:', error.message);
+            log(`Error: ${error.message}`);
             reject(error);
           })
           .connect(config);
@@ -113,8 +112,7 @@ describe('S3 deployment validation', () => {
           if (error) reject(error);
 
           stream.on('data', (data: any) => {
-            // eslint-disable-next-line no-console
-            console.log('Command Output:', data.toString());
+            log(`Command Output: ${data.toString()}`);
             resolve(data.toString());
           });
         });

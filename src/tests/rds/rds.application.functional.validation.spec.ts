@@ -13,6 +13,7 @@ import _ from 'lodash';
 import fs, { readFileSync } from 'fs-extra';
 import { join } from 'path';
 import FormData from 'form-data';
+import { log } from '../../utilities/common';
 import { BaseConfig } from '../../BaseConfig';
 
 describe('RDS application functional validation', () => {
@@ -151,8 +152,7 @@ describe('RDS application functional validation', () => {
     // Get columns
     const [columns] = await connection.query(`SHOW COLUMNS FROM ${rdsTableName}`);
     const columnNames = (columns as RowDataPacket[]).map((column) => column.Field);
-    // eslint-disable-next-line no-console
-    console.log('Column names in the table:', columnNames);
+    log(`Column names in the table: ${columnNames}`);
     expect(columnNames, `Columns names are not correct in the "${rdsTableName}" table`).to.have.members([
       'id',
       'object_key',
@@ -164,15 +164,13 @@ describe('RDS application functional validation', () => {
     // Get rows
     const [rows] = await connection.query(`SELECT COUNT(*) as count FROM ${rdsTableName};`);
     const rowCount = rows[0].count;
-    // eslint-disable-next-line no-console
-    console.log('Number of rows in the table:', rowCount);
+    log(`Number of rows in the table: ${rowCount}`);
     expect(rowCount, `Rows count is not correct in the "${rdsTableName}" table`).to.be.greaterThan(0);
 
     // Get images IDs
     const [images] = await connection.query('SELECT id FROM images;');
     const imageIds = (images as RowDataPacket[]).map((image) => image.id);
-    // eslint-disable-next-line no-console
-    console.log('IDs in the table:', imageIds);
+    log(`IDs in the table: ${imageIds}`);
     expect(imageIds, `There are no images IDs in the "${rdsTableName}" table`).to.be.an('array').that.is.not.empty;
 
     randomImageId = _.sample(imageIds);
