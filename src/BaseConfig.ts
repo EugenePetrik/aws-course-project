@@ -7,8 +7,15 @@ export const BaseConfig = {
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
   region: process.env.REGION,
   accountId: process.env.ACCOUNT_ID,
+  // MySQL RDS
   dbUsername: process.env.DB_USERNAME,
   dbPassword: process.env.DB_PASSWORD,
   dbName: process.env.DB_NAME,
   dbPort: process.env.DB_PORT,
+  // Mailtrap
+  mailtrapUrl: process.env.MAILTRAP_URL,
+  mailtrapToken: process.env.MAILTRAP_TOKEN,
+  mailtrapAccountId: process.env.MAILTRAP_ACCOUNT_ID,
+  mailtrapInboxId: process.env.MAILTRAP_INBOX_ID,
+  mailtrapEmail: process.env.MAILTRAP_EMAIL,
 };
