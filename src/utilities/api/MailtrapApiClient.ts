@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios';
 import { BaseApiClient } from './BaseApiClient';
 import { BaseConfig } from '../../BaseConfig';
-import { retryUntil } from '../Common';
+import { retryUntil } from '../common';
 
 const { mailtrapUrl, mailtrapToken, mailtrapAccountId, mailtrapInboxId } = BaseConfig;
 
@@ -28,16 +28,21 @@ export class MailtrapApiClient {
 
   async getLatestMessageIdBySubject(email: string, subject: string): Promise<string> {
     let messageId: string;
+
     await retryUntil(
       async () => {
         const allInboxMessages = await this.getAllMessages();
+
         const filteredMessages = allInboxMessages.data.filter((message) => {
           return message.to_email.includes(email) && message.subject === subject;
         });
+
         if (filteredMessages.length === 0) {
           throw new Error(`Email sent to "${email}" with subject "${subject}" was not found in Mailtrap`);
         }
+
         messageId = filteredMessages[0].id;
+
         return true;
       },
       {
@@ -45,6 +50,7 @@ export class MailtrapApiClient {
         timeout: 10_000,
       },
     );
+
     return messageId;
   }
 

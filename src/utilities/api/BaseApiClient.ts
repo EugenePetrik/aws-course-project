@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 import _ from 'lodash';
-import { log } from '../Common';
+import { log } from '../common';
 
 export class BaseApiClient {
   #instance: AxiosInstance;
