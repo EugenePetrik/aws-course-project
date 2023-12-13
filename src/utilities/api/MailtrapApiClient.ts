@@ -1,7 +1,7 @@
 import type { AxiosResponse } from 'axios';
 import { BaseApiClient } from './BaseApiClient';
 import { BaseConfig } from '../../BaseConfig';
-import { retryUntil } from '../common';
+import { retryUntil, wait } from '../common';
 
 const { mailtrapUrl, mailtrapToken, mailtrapAccountId, mailtrapInboxId } = BaseConfig;
 
@@ -32,6 +32,8 @@ export class MailtrapApiClient {
 
   async getLatestMessageIdBySubject(email: string, subject: string): Promise<string> {
     let messageId: string;
+
+    await wait(5_000);
 
     await retryUntil(
       async () => {

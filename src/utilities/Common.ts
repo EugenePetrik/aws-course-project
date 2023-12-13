@@ -12,7 +12,7 @@ export function log(message: string): void {
   console.log(`[${formatISO(new Date())}] : ${message}`);
 }
 
-async function wait(timeout: number): Promise<unknown> {
+export async function wait(timeout: number): Promise<unknown> {
   return new Promise((resolve) => {
     // eslint-disable-next-line no-promise-executor-return
     return setTimeout(resolve, timeout);
