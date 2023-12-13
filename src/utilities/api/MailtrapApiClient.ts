@@ -22,7 +22,11 @@ export class MailtrapApiClient {
     return this.#client.get(`/inboxes/${mailtrapInboxId}/messages`);
   }
 
-  async getMessageById(messageId: string): Promise<AxiosResponse<string>> {
+  async getMessageTextById(messageId: string): Promise<AxiosResponse<string>> {
+    return this.#client.get(`/inboxes/${mailtrapInboxId}/messages/${messageId}/body.txt`);
+  }
+
+  async getMessageHTMLById(messageId: string): Promise<AxiosResponse<string>> {
     return this.#client.get(`/inboxes/${mailtrapInboxId}/messages/${messageId}/body.html`);
   }
 
@@ -46,16 +50,21 @@ export class MailtrapApiClient {
         return true;
       },
       {
-        timesToRepeat: 10,
-        timeout: 10_000,
+        timesToRepeat: 5,
+        timeout: 5_000,
       },
     );
 
     return messageId;
   }
 
-  async getLatestMessageBySubject(email: string, subject: string): Promise<AxiosResponse<string>> {
-    const messageId: string = await this.getLatestMessageIdBySubject(email, subject);
-    return this.getMessageById(messageId);
+  async getLatestMessageTextBySubject(email: string, subjectValue: string): Promise<AxiosResponse<string>> {
+    const messageId: string = await this.getLatestMessageIdBySubject(email, subjectValue);
+    return this.getMessageTextById(messageId);
+  }
+
+  async getLatestMessageHTMLBySubject(email: string, subjectValue: string): Promise<AxiosResponse<string>> {
+    const messageId: string = await this.getLatestMessageIdBySubject(email, subjectValue);
+    return this.getMessageHTMLById(messageId);
   }
 }
