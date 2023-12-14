@@ -1,11 +1,16 @@
 import { expect } from 'chai';
-import { EC2Client, DescribeInstancesCommand, DescribeInstancesCommandOutput } from '@aws-sdk/client-ec2';
+import {
+  EC2Client,
+  DescribeInstancesCommand,
+  type DescribeInstancesCommandOutput,
+  type DescribeInstancesCommandInput,
+} from '@aws-sdk/client-ec2';
 import {
   DeleteObjectCommand,
   ListBucketsCommand,
-  ListBucketsCommandOutput,
+  type ListBucketsCommandOutput,
   ListObjectsV2Command,
-  ListObjectsV2CommandOutput,
+  type ListObjectsV2CommandOutput,
   S3Client,
 } from '@aws-sdk/client-s3';
 import AWS from 'aws-sdk';
@@ -38,7 +43,7 @@ describe('S3 application functional validation', () => {
   const s3ImagesPath: string = 'images/';
 
   before(async () => {
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',

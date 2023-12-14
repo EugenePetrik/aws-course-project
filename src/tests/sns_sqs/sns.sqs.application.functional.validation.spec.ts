@@ -230,9 +230,16 @@ describe('SNS/SQS application functional validation', function () {
     const response: AxiosResponse = await axios.get(`http://${ec2IpAddress}/api/notification`);
     expect(response.status, 'Get notifications response status is not correct').to.equal(200);
 
+    response.data.forEach((resp) => {
+      expect(resp.SubscriptionArn, 'SubscriptionArn is not present in response').to.exist.and.not.be.empty;
+      expect(resp.Protocol, 'Protocol is not present in response').to.exist.and.not.be.empty;
+      expect(resp.Endpoint, 'Endpoint is not present in response').to.exist.and.not.be.empty;
+      expect(resp.TopicArn, 'TopicArn is not present in response').to.exist.and.not.be.empty;
+    });
+
     const subscriptionsFromApi: number = response.data.length;
 
-    // Get subscriptions from AWS
+    // Get subscriptions via AWS
     const listSubscriptionsResp: ListSubscriptionsByTopicCommandOutput = await snsClient.send(
       new ListSubscriptionsByTopicCommand({
         TopicArn: topicSns,

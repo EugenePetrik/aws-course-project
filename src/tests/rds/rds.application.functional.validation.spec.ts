@@ -3,11 +3,16 @@ import {
   RDSClient,
   DescribeDBInstancesCommand,
   type DescribeDBInstancesCommandOutput,
-  DBInstance,
+  type DBInstance,
 } from '@aws-sdk/client-rds';
 import { type ForwardOptions, type SshOptions, type ServerOptions, type TunnelOptions, createTunnel } from 'tunnel-ssh';
 import mysql, { type Connection, type RowDataPacket } from 'mysql2/promise';
-import { DescribeInstancesCommand, type DescribeInstancesCommandOutput, EC2Client } from '@aws-sdk/client-ec2';
+import {
+  DescribeInstancesCommand,
+  type DescribeInstancesCommandOutput,
+  EC2Client,
+  type DescribeInstancesCommandInput,
+} from '@aws-sdk/client-ec2';
 import axios, { type AxiosResponse } from 'axios';
 import _ from 'lodash';
 import fs, { readFileSync } from 'fs-extra';
@@ -42,7 +47,7 @@ describe('RDS application functional validation', () => {
   before(async function () {
     // Get EC2 data
 
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',

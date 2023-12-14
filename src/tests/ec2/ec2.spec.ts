@@ -5,10 +5,11 @@ import {
   DescribeInstancesCommand,
   DescribeSecurityGroupsCommand,
   DescribeVolumesCommand,
-  DescribeInstancesCommandOutput,
-  DescribeVolumesCommandOutput,
-  DescribeSecurityGroupsCommandOutput,
-  SecurityGroup,
+  type DescribeInstancesCommandOutput,
+  type DescribeVolumesCommandOutput,
+  type DescribeSecurityGroupsCommandOutput,
+  type SecurityGroup,
+  type DescribeInstancesCommandInput,
 } from '@aws-sdk/client-ec2';
 import { BaseConfig } from '../../BaseConfig';
 
@@ -28,7 +29,7 @@ describe('EC2', () => {
 
   before(async () => {
     // Get information about instances
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',
@@ -90,7 +91,7 @@ describe('EC2', () => {
   it('Should return public instances volumes', async () => {
     const instanceId: string = deployedInstances.find((instance) => instance.type === 'public').id;
 
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'attachment.instance-id',
@@ -108,7 +109,7 @@ describe('EC2', () => {
   it('Should return private instances volumes', async () => {
     const instanceId: string = deployedInstances.find((instance) => instance.type === 'private').id;
 
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'attachment.instance-id',

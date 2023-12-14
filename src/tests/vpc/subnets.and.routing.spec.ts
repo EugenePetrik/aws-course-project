@@ -5,10 +5,10 @@ import {
   DescribeRouteTablesCommand,
   DescribeInternetGatewaysCommand,
   Subnet,
-  DescribeSubnetsCommandOutput,
-  DescribeRouteTablesCommandOutput,
-  Route,
-  DescribeInternetGatewaysCommandOutput,
+  type DescribeSubnetsCommandOutput,
+  type DescribeRouteTablesCommandOutput,
+  type Route,
+  type DescribeInternetGatewaysCommandOutput,
 } from '@aws-sdk/client-ec2';
 import { BaseConfig } from '../../BaseConfig';
 

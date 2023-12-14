@@ -1,5 +1,10 @@
 import { expect } from 'chai';
-import { EC2Client, DescribeInstancesCommand, DescribeInstancesCommandOutput } from '@aws-sdk/client-ec2';
+import {
+  EC2Client,
+  DescribeInstancesCommand,
+  type DescribeInstancesCommandOutput,
+  type DescribeInstancesCommandInput,
+} from '@aws-sdk/client-ec2';
 import {
   GetBucketEncryptionCommand,
   GetBucketPolicyStatusCommand,
@@ -7,11 +12,11 @@ import {
   GetBucketVersioningCommand,
   GetPublicAccessBlockCommand,
   ListBucketsCommand,
-  ListBucketsCommandOutput,
+  type ListBucketsCommandOutput,
   ListObjectsCommand,
-  ListObjectsCommandOutput,
+  type ListObjectsCommandOutput,
   S3Client,
-  Tag,
+  type Tag,
 } from '@aws-sdk/client-s3';
 import axios, { type AxiosResponse } from 'axios';
 import { readFileSync } from 'fs';
@@ -39,7 +44,7 @@ describe('S3 deployment validation', () => {
   const bucketPrefix: string = 'cloudximage-imagestorebucket';
 
   before(async () => {
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',

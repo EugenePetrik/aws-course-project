@@ -3,7 +3,12 @@ import mysql, { type Connection } from 'mysql2/promise';
 import { join } from 'path';
 import { readFileSync } from 'fs';
 import { expect } from 'chai';
-import { DescribeInstancesCommand, type DescribeInstancesCommandOutput, EC2Client } from '@aws-sdk/client-ec2';
+import {
+  DescribeInstancesCommand,
+  type DescribeInstancesCommandOutput,
+  EC2Client,
+  type DescribeInstancesCommandInput,
+} from '@aws-sdk/client-ec2';
 import {
   type DBInstance,
   DescribeDBInstancesCommand,
@@ -34,7 +39,7 @@ describe('MySQL RDS connection via SSH tunnel', () => {
   before(async function () {
     // Get EC2 data
 
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',

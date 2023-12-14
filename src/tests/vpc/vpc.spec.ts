@@ -4,10 +4,11 @@ import {
   DescribeInstancesCommand,
   DescribeVpcsCommand,
   DescribeSubnetsCommand,
-  DescribeInstancesCommandOutput,
-  DescribeVpcsCommandOutput,
+  type DescribeInstancesCommandOutput,
+  type DescribeVpcsCommandOutput,
   Vpc,
-  DescribeSubnetsCommandOutput,
+  type DescribeSubnetsCommandOutput,
+  type DescribeInstancesCommandInput,
 } from '@aws-sdk/client-ec2';
 import { BaseConfig } from '../../BaseConfig';
 
@@ -25,7 +26,7 @@ describe('VPC', () => {
   });
 
   before(async () => {
-    const params = {
+    const params: DescribeInstancesCommandInput = {
       Filters: [
         {
           Name: 'instance-state-name',

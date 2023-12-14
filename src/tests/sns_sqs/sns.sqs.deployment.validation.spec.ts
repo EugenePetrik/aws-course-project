@@ -237,7 +237,7 @@ describe('SNS/SQS deployment validation', function () {
       }),
     );
 
-    expect(attrsResp.Attributes.KmsMasterKeyId, 'Encryption is enabled').to.be.undefined;
+    expect(attrsResp.Attributes?.KmsMasterKeyId, 'Encryption is enabled').to.be.undefined;
 
     const tagsResp: ListTagsForResourceCommandOutput = await snsClient.send(
       new ListTagsForResourceCommand({
@@ -256,7 +256,7 @@ describe('SNS/SQS deployment validation', function () {
       }),
     );
 
-    expect(attrsResp.Attributes.SqsManagedSseEnabled, 'Encryption is disabled').to.equal('true');
+    expect(attrsResp.Attributes?.SqsManagedSseEnabled, 'Encryption is disabled').to.equal('true');
 
     const tagsResp: ListQueueTagsCommandOutput = await sqsClient.send(
       new ListQueueTagsCommand({
