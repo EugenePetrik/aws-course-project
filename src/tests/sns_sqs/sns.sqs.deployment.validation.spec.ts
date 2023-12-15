@@ -161,7 +161,9 @@ describe('SNS/SQS deployment validation', function () {
       await snsClient.send(new GetSubscriptionAttributesCommand({ SubscriptionArn }));
       expect.fail('Subscription still exists.');
     } catch (error) {
-      expect(JSON.stringify(error)).to.contain('Subscription does not exist');
+      if (error instanceof Error) {
+        expect(error.message).to.contain('Subscription does not exist');
+      }
     }
   });
 

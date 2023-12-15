@@ -70,6 +70,7 @@ describe('RDS deployment validation', () => {
 
       expect.fail(`Successfully connected to ${rdsInstance.DBInstanceIdentifier} at ${rdsEndpoint}.`);
     } catch (error) {
+      if (error instanceof Error) log(error.message);
       log(`Failed to connect to ${rdsInstance.DBInstanceIdentifier} (expected).`);
       expect(JSON.stringify(error)).to.equal('{"message":"connect ETIMEDOUT","code":"ETIMEDOUT"}');
     } finally {

@@ -98,7 +98,7 @@ describe('S3 application functional validation', () => {
       await fs.ensureDir(folderPath);
       log(`Folder has been created/verified: ${folderPath}`);
     } catch (error) {
-      log(`Error creating folder: ${JSON.stringify(error)}`);
+      if (error instanceof Error) log(`Error creating folder: ${error.message}`);
       throw error;
     }
 
@@ -133,6 +133,7 @@ describe('S3 application functional validation', () => {
         });
       });
     } catch (error) {
+      if (error instanceof Error) log(error.message);
       expect.fail('Unexpected error while downloading image:', error);
     }
 

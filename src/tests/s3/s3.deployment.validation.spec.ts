@@ -132,7 +132,10 @@ describe('S3 deployment validation', () => {
       expect(commandOutput, 'The command should return username').to.include('ec2-user');
     } catch (error) {
       client.end();
-      expect.fail(`Error in SSH connection: ${JSON.stringify(error)}`);
+
+      if (error instanceof Error) {
+        expect.fail(`Error in SSH connection: ${error.message}`);
+      }
     }
   });
 
@@ -147,6 +150,7 @@ describe('S3 deployment validation', () => {
       const response: ListObjectsCommandOutput = await s3Client.send(new ListObjectsCommand({ Bucket: bucketName }));
       expect(response.Name, 'Bucket name is not correct').to.contains(bucketPrefix);
     } catch (error) {
+      if (error instanceof Error) log(error.message);
       expect.fail('Error accessing S3 bucket');
     }
   });

@@ -127,7 +127,8 @@ describe('MySQL RDS connection via SSH tunnel', () => {
       // OUTPUT: Tables in the database: [ { Tables_in_cloudximages: 'images' } ]
 
       expect(rows, 'There are no created tales').to.be.an('array').that.is.not.empty;
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) log(error.message);
       expect.fail(`Failed to connect to ${rdsEndpoint}`);
     } finally {
       if (connection && connection.end) {

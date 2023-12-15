@@ -284,7 +284,8 @@ describe('SNS/SQS application functional validation', function () {
     try {
       const downloadImageResponse: AxiosResponse = await axios.get(downloadUrl, { responseType: 'blob' });
       expect(downloadImageResponse.status, 'Download image response status is not correct').to.equal(200);
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) log(error.message);
       expect.fail('Cannot download the image');
     }
   });
@@ -329,7 +330,7 @@ describe('SNS/SQS application functional validation', function () {
       const elementText: string = await page.locator('h1#status').textContent();
       expect(elementText, 'Expected element text is not correct').to.includes('Subscription removed!');
     } catch (error) {
-      log(`Error when navigating: ${JSON.stringify(error)}`);
+      if (error instanceof Error) log(`Error when navigating: ${error.message}`);
       expect.fail('Cannot open unsubscribe URL');
     } finally {
       await browser.close();
@@ -343,6 +344,7 @@ describe('SNS/SQS application functional validation', function () {
       );
       expect(unsubscribeResp.data).to.includes('Your subscription to the topic below has been deactivated');
     } catch (error) {
+      if (error instanceof Error) log(error.message);
       expect.fail('User is not unsubscribed');
     }
   });
@@ -368,7 +370,8 @@ describe('SNS/SQS application functional validation', function () {
       const mailtrapService: MailtrapApiClient = new MailtrapApiClient();
       await mailtrapService.getLatestMessageTextBySubject(mailtrapEmail, subject);
       expect.fail('The unsubscribed user still receives notifications');
-    } catch {
+    } catch (error) {
+      if (error instanceof Error) log(error.message);
       log('The unsubscribed user does not receive further notifications');
     }
   });
