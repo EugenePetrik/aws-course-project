@@ -316,7 +316,7 @@ describe('Serverless application functional validation', function () {
       new ListSubscriptionsCommand({}),
     );
     expect(listSubscriptionsResp.Subscriptions, 'Subscriptions is not an array').to.be.an('array');
-    expect(listSubscriptionsResp.Subscriptions, 'There are no subscriptions').to.be.greaterThan(0);
+    expect(listSubscriptionsResp.Subscriptions.length, 'There are no subscriptions').to.be.greaterThan(0);
   });
 
   it('should be able to send a message to an SQS queue', async () => {
